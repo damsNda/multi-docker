@@ -1,0 +1,39 @@
+{
+	"AWSEBDockerrunVersion": 2,
+	"ContainerDefinitions": [
+		{
+			"name": "client",
+			"image": "damnda/multi-client",
+			"hostname": "client",
+			"essential": false
+		},
+		{
+			"name": "server",
+			"image": "damnda/multi-server",
+			"hostname": "api",
+			"essential": false
+		},
+		{
+			"name": "worker",
+			"image": "damnda/multi-worker",
+			"hostname": "worker",
+			"essential": false
+		},
+		{
+			"name": "nginx",
+			"image": "damnda/multi-nginx",
+			"hostname": "nginx",
+			"essential": true,
+			"portMappings": [
+				{
+					"hostPort": 80,
+					"containerPort": 80
+				}
+			],
+			"links": [
+				"server",
+				"client"
+			]
+		}
+	]
+}
