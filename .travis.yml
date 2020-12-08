@@ -1,26 +1,24 @@
-#On se met en sudo
 sudo: required
+language: generic
 
-#On dit a travis qu on a besoin de dockerd
 services:
   - docker
 
 before_install:
-  - docker build -t damnda/docker-react-test -f ./client/Dockerfile.dev ./client
+  - docker build -t stephengrider/react-test -f ./client/Dockerfile.dev ./client
 
-#-- --coverage just for exit on a le coverage  
 script:
-  - docker run -e CI=true damnda/docker-react-test npm run test -- --coverage
+  - docker run -e CI=true stephengrider/react-test npm test
+
 after_success:
-#Build each production docker image
- - docker build -t damnda/multiclient ./client 
- - docker build -t damnda/multinginx ./nginx 
- - docker build -t damnda/multiserver ./server 
- - docker build -t damnda/multiworker ./worker 
-# Log in to the docker CLI echo parce que le password est interactif
- - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
-#Take those images and push to docker hub
- - docker push damnda/multiclient
- - docker push damnda/multinginx
- - docker push damnda/multiserver
- - docker push damnda/multiworker
+  - docker build -t stephengrider/multi-client ./client
+  - docker build -t stephengrider/multi-nginx ./nginx
+  - docker build -t stephengrider/multi-server ./server
+  - docker build -t stephengrider/multi-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push stephengrider/multi-client
+  - docker push stephengrider/multi-nginx
+  - docker push stephengrider/multi-server
+  - docker push stephengrider/multi-worker
